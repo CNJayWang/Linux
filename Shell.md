@@ -159,6 +159,13 @@ n|传递给脚本或函数的参数。n是一个数字，表示第几个数字�
 ?|上个命令的退出状态，或函数的返回值
 $|当前Shell的进程id.对于Shell脚本，就是这些脚本所在的进程ID。
 
+`${@}`__与__`${?}`**的区别**
+它两都是表示传递给脚本或函数的所有参数，但区别是当包含在`" "`中情况就不同了，其他都是一样的。当以`"${*}"`多个参数会这样输出：`"${1}${2}{3}..."`，而`"${@}"`则会这样输出：`"${1}""${2}""${3}"....`,是分开输出的。
+
+`${?}`__退出状态__
+$? 可以获取上一个命令的推出状态，也就是上一个命令执行后的返回值。熟悉Linux命令的同学，应该知道管道，我们可以以一个命令的执行结果作为另一个命令的执行参数，如`ps -ef|grep mysql`。这里应该就是`${?}`发挥的作用吧。
+
+
 #### 命令行参数
 
 运行脚本时传递给脚本的参数，称为命令行参数。命令行参数用`$n`表示，在上一节中我已经介绍了一种Shell的特殊变量。不懂的可以看上面的图表。
@@ -177,6 +184,107 @@ First Param: Hello
 Second Param: world
 ```
 
+### Shell替换
+如果表达式中包含特殊字符，Shell将会进行替换。例如在双`" "`中变量就是一种替换，转译字符也是一种替换。
+举个例子：
+```
+#!/bin/sh
+username="Jay"
+echo -e "Hello ${username} \n"
+```
+运行结果：
+```
+Hello Jay
+```
+这里`-e`时表示对转义字符进行替换，如果不用就会原样输出：
+```
+Hello Jay \n
+```
+一些转义字符如下：
 
+转义字符|含义
+-----|------
+\\\ |反斜杠
+\\a|警报，响铃
+\\b|退格
+\\f|换页
+\\n|换行
+\\r|回车
+\\t|水平制表符
+\\v|垂直制表符
+可以使用`echo -E`命令静止转义，默认也是不转义对。
 
+#### 命令替换
+命令替换是让shell先执行命令然后保存执行结果到一个变量，在稍后需要到地方进行处理。
+命令替换的语法。
+```
+`command`
+```
+这里`command`是在反引号里面不是单引号。
+例子：
+```
+DATE=`date`
+echo $DATE
+WHO=`who`
+for w in $WHO; do
+	echo $w
+done
 
+```
+运行结果如下：
+```
+2016年 1月 3日 星期日 02时28分16秒 CST
+Jay
+console
+Dec
+27
+03:48
+Jay
+ttys000
+Jan
+2
+16:47
+```
+#### 变量替换
+变量替换式根据变量的状态（是否为空、是否定义等）来改变它的值
+可以使用的变量替换形式
+形式|说明
+----|---
+${var}|变量本来的值
+${var:-word}|如果变量var为空或删除(unset)，返回word,但不改变var的值
+${var:=word}|如果变量var为空或删除(unset)，返回word,并将var对值设置为word
+${var:?message}|如果变量 var 为空或已被删除(unset)，那么将消息 message 送到标准错误输出，可以用来检测变量 var 是否可以被正常赋值。若此替换出现在Shell脚本中，那么脚本将停止运行
+${var:+word}|如果变量 var 被定义，那么返回 word，但不改变 var 的值。
+
+例子：
+```
+echo ${var:-"Variable is not set"}
+echo "1 - Value of var is ${var}"
+
+echo ${var:="Variable is not set"}
+echo "2 - Value of var is ${var}"
+
+unset var
+echo ${var:+"This is default value"}
+echo "3 - Value of var is $var"
+
+var="Prefix"
+echo ${var:+"This is default value"}
+echo "4 - Value of var is $var"
+
+echo ${var:?"Print this message"}
+echo "5 - Value of var is ${var}"
+```
+运行结果：
+```
+Variable is not set
+1 - Value of var is
+Variable is not set
+2 - Value of var is Variable is not set
+
+3 - Value of var is
+This is default value
+4 - Value of var is Prefix
+Prefix
+5 - Value of var is Prefix
+```
