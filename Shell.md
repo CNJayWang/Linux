@@ -74,11 +74,107 @@ echo "Hello World !"
 ```
 这样运行脚本就是不需要在脚本第一行定义运行的解释器了。
 
+###变量
 
-   
-	
-    
-	
-    
-    
- 
+####定义变量
+
+有C、Java编程基础的应该会容易定义Shell中的变量，Shell的变量名也遵循相似的规则
+* 首字符必须为（a-z,A-Z）
+* 中间不能有空格，可以使用下划线
+* 不能使用标点符号
+* 是能适应系统的保留关键字
+
+变量定义举例：
+```
+username="Jay"
+email="jay.wang.liu@gmail.com"
+```
+#### 变量的使用
+使用一个变量只需要在变量多前面加上美元符号`$`就可以了，如：
+```
+usrname="Jay"
+email="jay.wang.liu@gmail.com"
+echo $username
+echo $email
+```
+你可以使用`$var`或`${var}`的方式使用变量，这都是可以的，不过我觉得用最好用第二种，因为代码多了，或者用在字符串中第二种可以使变量与其他代码隔离,不会使解释器识别出错，例如：
+```
+firstName="Jay"
+echo "Hello,${firstName}Wang!"
+echo "Hello,$firstNameWang"
+```
+#### 变量的重新定义
+已知的变量，可以重新定义，例如：
+```
+username="JayWang"
+password="123456"
+echo "${password} is ${username}'s old password "
+password="abc123456"
+echo "${password} is ${username}'s new password"
+````
+#### 只读变量
+熟悉的java的人应该知道java中的`final static`的变量一旦定义只能读取不能修改，`shell`中使用`readonly`来表明这个变量为只读变量。例如下面多例子的更改一个`readonly`讲在运行时报错。
+```
+#!/bin/bash
+username="Jay"
+readonly username
+username="JayWang"
+echo ${username}
+```
+运行结果如下：
+```
+test.sh: line 3: username: readonly variable
+```
+#### 删除变量
+使用unset命令可以删除变量
+```
+unset var_name
+```
+变量删除后不能在使用了，当然了`unset`不能删除一个`readonly`变量。
+
+#### 变量的作用域
+ 1. 局部变量：也就是只在当前脚步代码中有效
+ 2. 环境变量：环境变量，也就是全局变量，相对于解释器的，所有的shell脚本和程序都能访问
+
+#### Shell特殊变量
+ 我们在介绍定义一个shell变量时只能包含字母、数字、下划线，是因为有些包含其他字符的变量时系统的保留多特殊变量。
+
+例如，0代表当前文件名，下面的代码：
+```
+echo ${0}
+```
+运行结果：输出了当前所执行脚本的文件名
+```
+test.sh
+```
+下面总结了一些特殊变量名
+变量 |含义
+------------|---------
+0|当前执行脚本的文件名
+n|传递给脚本或函数的参数。n是一个数字，表示第几个数字。例如：`$2`表示第二个参数
+＃|传递给脚本或函数的参数个数
+*|传递给脚本或函数的所有参数
+@|传递给脚本或函数的所有参数。被双引号（" ")包含时，与`*`会不同
+？|上个命令的退出状态，或函数的返回值
+$|当前Shell的进程id.对于Shell脚本，就是这些脚本所在的进程ID。
+
+#### 命令行参数
+运行脚本时传递给脚本的参数，称为命令行参数。命令行参数用`$n`表示，在上一节中我已经介绍了一种Shell的特殊变量。不懂的可以看上面的图表。
+下面是我写的一个例子，展示向脚本传输参数。
+```
+#!/bin/sh
+echo "Shell Filename is:${0} "
+echo "First Param :${1}"
+echo "Second Param :${2}"
+```
+运行结果：
+```
+./test2.sh "Hello" "world"
+Shell Filename:./test2.sh
+First Param: Hello
+Second Param: world
+```
+
+
+
+
