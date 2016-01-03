@@ -672,9 +672,11 @@ fi
 -e|检测文件是否为空，包括目录，如果是，则返回ture
 
 ### 字符串
+
 字符串在编程中是最常用的数据类型，当然在shell中也是这样，shell中字符串可以用`" "`或`' '`。
 
 ####单引号
+
 ```
 strg='this is a string'
 ```
@@ -683,6 +685,7 @@ strg='this is a string'
 * 单引号里面是不能出现单引号的，即使进行转义也不行。
 
 ####双引号
+
 ```
 username="Jay"
 email="jay.wang.liu@gmail.com"
@@ -693,6 +696,7 @@ echo "${username} is login and email is ${email} \n"
 * 双引号也可以有转义字符
 
 ####拼接字符串
+
 ```
 firstName="Jay"
 lastName="Wang'
@@ -705,6 +709,7 @@ echo ${username}
 Wang,Jay
 ```
 ####获取字符穿长度
+
 ```
 string="qazwsx"
 echo ${#string}
@@ -714,6 +719,7 @@ echo ${#string}
 6
 ```
 ####提取子字符串
+
 ```
 string＝"Jay is learing linux shell"
 echo ${string:0:2}
@@ -721,14 +727,17 @@ echo ${string:0:2}
 ```
 
 ####查找子字符串
+
 ```
 string="Jay is learing linux shell"
 echo `expr index "${string} is"`
 ```
 ###数组
+
 数组很重要的，用来顺序存储一组数据，在`bash shell`中只支持一纬数组，但和`C`一样不限定数组长度，取数组中元素需要下标`index`，从0开始。
 
 ####定义数组
+
 在shell中定义数组不像`C`和`Java`使用`{}`直接定义，这里是用`()`定义数组的。
 例如：
 ```
@@ -752,6 +761,7 @@ array[1]="value2"
 array[2]="value3"
 ```
 #### 读取数组元素
+
 读取数组的一般格式为：
 ```
 ${array[index]}
@@ -763,6 +773,7 @@ ${array[@]}
 ```
 
 #### 获取数组的长度
+
 获取数组长度和获取字符串的长度方法一样，字符串本身也是一个字符数组。
 ```
 #取得数组元素的个数
@@ -772,15 +783,20 @@ length=${#array[@]}
 #获取数组中的元素的长度
 length=${#array[n]}
 ```
+
 ### echo和printf
+
 echo和printf都是向屏幕终端输出只定字符。echo是普通的输出，printf像在C中一样时格式化输出。
 
 #### echo
+
 echo是Shell的一个内部指令。格式如下：
 ```
 echo arg
 ```
+
 ###### 显示转义字符
+
 ```
 echo "\"This is a test \" \n"
 ```
@@ -790,6 +806,7 @@ echo "\"This is a test \" \n"
 
 ```
 ######显示变量
+
 ```
 username="Jay"
 email="jay.wang.liu@gmail.com"
@@ -801,7 +818,9 @@ echo ${email}
 Jay has login
 jay.wang.liu.wang@gmail.com
 ```
+
 ######显示转义字符
+
 ```
 #换行
 echo "test /n"
@@ -810,13 +829,16 @@ echo "test /c"
 ```
 
 ######显示结构重定向
+
 这个应该是在Linux上经常的操作
 ```
 #创建一个文件把输出结果重定向到文件中
 file=`touch test`
 echo "Hello Jay" >${file}
 ```
+
 ######显示命令执行结果
+
 ```
 #显示当前日期
 echo `date`
@@ -869,7 +891,9 @@ $
 注意，根据POSIX标准，浮点格式`%e`、`%E`、`%f`、`%g`与`%G`是“不需要被支持”。这是因为awk支持浮点预算，且有它自己的printf语句。这样Shell程序中需要将浮点数值进行格式化的打印时，可使用小型的awk程序实现。然而，内建于bash、ksh93和zsh中的printf命令都支持浮点格式。
 
 ###流程控制
+
 #### if else
+
 if语句通过关系运算表达式来判断执行哪个分支。三种分支`if....else`语句
 * `if...fi`语句
 * `if...else...fi`语句
@@ -877,6 +901,7 @@ if语句通过关系运算表达式来判断执行哪个分支。三种分支`if
 
 
 #####if...fi语句
+
 ```
 if [ expression ]
 then
@@ -885,6 +910,7 @@ fi
 ```
 
 #####if...else...fi语句
+
 ```
 if [ expression]
 then
@@ -894,6 +920,7 @@ else
 fi
 ```
 #####if...elif..fi语句
+
 ```
 if [ expression0 ]
 then 
@@ -907,6 +934,7 @@ fi
 ```
 
 #### case esac
+
 case...esac与其他的语言中的switch...case语句类似，是多分支结构
 格式如下：
 ```
@@ -960,6 +988,7 @@ You select 3
 ```
 
 #### for 循环
+
 shell中for循环的格式如下：
 ```
 for var in list
@@ -1014,6 +1043,7 @@ done
 ```
 
 #### while循环
+
 while循环用于不断执行一系列命令，也用于从文件中读取数据命令
 ```
 while command
@@ -1041,15 +1071,154 @@ done
 4
 5
 ```
-还可以写一个`while` 显示键盘的输入信息
+还可以写一个`while` 显示键盘的输入信息,直到输入`exit`才推出
 ```
 while read input
 do
 	echo "you input ${input}"
+    if [ ${inpit} == "exit" ]
+    then
+    	break
+     fi
 done
 ```
 ####until循环
+`until`循环也就是直到型循环，当条件为`true`时就终止循环，正好和`while`相反。
+
+until循环的格式
+```
+until command
+do
+	Statement(s) to be executed until command is true
+done
+```
+例如，打印0~10的数字
+```
+#!/bin/bash
+a=0
+until [ ! ${a} -le 10 ]
+do
+	echo ${a}
+	a=`expr ${a} + 1`
+done
+```
+输出结果为:
+```
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+```
+
 ####跳出循环
 
+在循环的过程中，有时需要在为到达循环结束的条件，需要强制跳出循环，和大多数编程语言一样，用`break`和`continue`
+
+#####break命令
+
+break命令允许跳出所有循环（终止执行后面的所有循环）
+下面的例子中，脚本进入死循环直至用户输入数字大于5。要跳出这个循环，返回到shell提示符下，就要使用break命令。
+```
+#!/bin/bash
+while :
+do
+    echo -n "Input a number between 1 to 5: "
+    read aNum
+    case $aNum in
+        1|2|3|4|5) echo "Your number is $aNum!"
+        ;;
+        *) echo "You do not select a number between 1 to 5, game is over!"
+            break
+        ;;
+    esac
+done
+```
+
+在嵌套循环中，break 命令后面还可以跟一个整数，表示跳出第几层循环。例如：
+```
+break n
+```
+
+下面是一个嵌套循环的例子，如果 var1 等于 2，并且 var2 等于 0，就跳出循环：
+```
+#!/bin/bash
+
+for var1 in 1 2 3
+do
+   for var2 in 0 5
+   do
+      if [ $var1 -eq 2 -a $var2 -eq 0 ]
+      then
+         break 2
+      else
+         echo "$var1 $var2"
+      fi
+   done
+done
+```
+如上，break 2 表示直接跳出外层循环。运行结果：
+```
+1 0
+1 5
+```
+
+#####continue命令
+
+continue命令与break命令类似，只有一点差别，它不会跳出所有循环，仅仅跳出当前循环
+对上面的例子进行修改：
+```
+#!/bin/bash
+while :
+do
+    echo -n "Input a number between 1 to 5: "
+    read aNum
+    case $aNum in
+        1|2|3|4|5) echo "Your number is $aNum!"
+        ;;
+        *) echo "You do not select a number between 1 to 5!"
+            continue
+            echo "Game is over!"
+        ;;
+    esac
+done
+```
+运行代码发现，当输入大于5的数字时，该例中的循环不会结束，语句
+```
+echo "Game is over!"
+```
+同样，continue 后面也可以跟一个数字，表示跳出第几层循环。
+再看一个 continue 的例子：
+```
+#!/bin/bash
+
+NUMS="1 2 3 4 5 6 7"
+
+for NUM in $NUMS
+do
+   Q=`expr $NUM % 2`
+   if [ $Q -eq 0 ]
+   then
+      echo "Number is an even number!!"
+      continue
+   fi
+   echo "Found odd number"
+done
+```
+运行结果：
+```
+Found odd number
+Number is an even number!!
+Found odd number
+Number is an even number!!
+Found odd number
+Number is an even number!!
+Found odd numbe
+```
 ###函数
 
