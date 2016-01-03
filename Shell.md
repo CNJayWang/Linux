@@ -751,7 +751,7 @@ array[0]="value1"
 array[1]="value2"
 array[2]="value3"
 ```
-####读取数组元素
+#### 读取数组元素
 读取数组的一般格式为：
 ```
 ${array[index]}
@@ -762,7 +762,7 @@ ${array[*]}
 ${array[@]}
 ```
 
-####获取数组的长度
+#### 获取数组的长度
 获取数组长度和获取字符串的长度方法一样，字符串本身也是一个字符数组。
 ```
 #取得数组元素的个数
@@ -772,3 +772,98 @@ length=${#array[@]}
 #获取数组中的元素的长度
 length=${#array[n]}
 ```
+### echo和printf
+echo和printf都是向屏幕终端输出只定字符。echo是普通的输出，printf像在C中一样时格式化输出。
+
+#### echo
+echo是Shell的一个内部指令。格式如下：
+```
+echo arg
+```
+###### 显示转义字符
+```
+echo "\"This is a test \" \n"
+```
+输出：
+```
+"This is a test"
+
+```
+######显示变量
+```
+username="Jay"
+email="jay.wang.liu@gmail.com"
+echo "${userame} has login"
+echo ${email}
+```
+输出：
+```
+Jay has login
+jay.wang.liu.wang@gmail.com
+```
+######显示转义字符
+```
+#换行
+echo "test /n"
+#不换行
+echo "test /c"
+```
+
+######显示结构重定向
+这个应该是在Linux上经常的操作
+```
+#创建一个文件把输出结果重定向到文件中
+file=`touch test`
+echo "Hello Jay" >${file}
+```
+######显示命令执行结果
+```
+#显示当前日期
+echo `date`
+```
+
+####printf
+printf是格式化输出，功能上比echo更强大。而且printf由POSIX标准定义，所以移植性比echo要好。
+printf命令的语法：
+```
+printf format-string [arguments]
+```
+format-string 为格式控制字符串，argumetns为显示的字符参数数组
+shell与C的printf的不同：
+* 这里不需要加括号
+* `ormat-string `可以没有引号，但最好加上，可以双引号，也可以双引号
+* 参数多于格式控制符时`(%)`,`format-string`可以重用，可以将所有参数都转换
+* `agruments`使用空格分开，不使用逗号`,`
+
+完整的例子：
+```
+# format-string为双引号
+$ printf "%d %s\n" 1 "abc"
+1 abc
+# 单引号与双引号效果一样 
+$ printf '%d %s\n' 1 "abc" 
+1 abc
+# 没有引号也可以输出
+$ printf %s abcdef
+abcdef
+# 格式只指定了一个参数，但多出的参数仍然会按照该格式输出，format-string 被重用
+$ printf %s abc def
+abcdef
+$ printf "%s\n" abc def
+abc
+def
+$ printf "%s %s %s\n" a b c d e f g h i j
+a b c
+d e f
+g h i
+j
+# 如果没有 arguments，那么 %s 用NULL代替，%d 用 0 代替
+$ printf "%s and %d \n" 
+and 0
+# 如果以 %d 的格式来显示字符串，那么会有警告，提示无效的数字，此时默认置为 0
+$ printf "The first program always prints'%s,%d\n'" Hello Shell
+-bash: printf: Shell: invalid number
+The first program always prints 'Hello,0'
+$
+```
+注意，根据POSIX标准，浮点格式`%e`、`%E`、`%f`、`%g`与`%G`是“不需要被支持”。这是因为awk支持浮点预算，且有它自己的printf语句。这样Shell程序中需要将浮点数值进行格式化的打印时，可使用小型的awk程序实现。然而，内建于bash、ksh93和zsh中的printf命令都支持浮点格式。
