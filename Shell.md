@@ -288,3 +288,353 @@ This is default value
 Prefix
 5 - Value of var is Prefix
 ```
+### 运算符
+Bash 支持很多运算符，包括算数运算、关系运算、布尔运算、字符串运算、文件检测运算
+原生的bash不支持简单的数学运算，但可以通过其他的命令来实现，例如：awk、expr
+
+expr表达式计算，可以完成表达式的的求值操作
+例如，求两数相加：
+```
+#!/bin/bash
+result=`expr 1 + 2`
+echo "The result is:${result}"
+```
+脚本的运行结果：
+```
+The result is:3
+```
+注意事项：
+
+* 表达式和运算符之间要有空格，例如`1+2`是不对的，必需写成`1 + 2`
+* 完整的表达式是一个`command`,所以要被｀ ｀包含。
+
+#### 算术运算符
+算术运算符列表：
+运算符|说明|举例
+-----|----|-------
++|加法|｀expr $a + $b｀
+-|减法| ｀expr $a - $b｀
+*|乘法|｀expr $a \* $b｀这里乘的运算符需要用`\`转义
+/|除法|｀expr $a / $b｀
+%|取余|｀expr $a % $ b｀
+=|赋值|a=$b
+==|相等。|[$a == $b]
+!=|不相等|[$ != $b]
+注意：条件表达式必须放在`[ ]`之间，并且之间要有空格。`[ $a == $b]`。
+
+#### 关系运算符
+关系运算符只支持数字，不支持字符串，除非字符串的值是数字。
+关系运算的一个脚本例子：
+```
+#!/bin/bash
+a=10
+b=20
+
+#相等
+if [ $a -eq $b ]
+then 
+    echo "$a -ea $b:a is equal to b"
+else
+    echo "$a -eq $b:a is not eual b"
+fi
+
+#不相等
+if [ $a -ne $b ]
+then 
+    echo "$a -ne $b:a is not equal to b"
+else 
+    echo "$a -ne $b:a is equal to b"
+fi
+
+#大于
+if [ $a -gt $b ]
+then 
+    echo "$a -gt $b:a is greater than b"
+else
+    echo "$a -get $b:a is not greater than b"
+fi
+
+#小于
+if [ $a -lt $b ]
+then
+     echo "$a -lt $b:a is less than b"
+else
+    echo "$a -lt $b:a is not less than b"
+fi
+
+#大于等于
+if [ $a -ge $b ]
+then 
+    echo "$a -ge $b:a is  greater or equal to b"
+else
+    echo "$a -ge $b:a is greater or equal to b"
+fi
+
+#小于等于
+if [ $a -le $b ]
+then
+    echo "$a -le $b:a is less or equal to b"
+else
+    echo "$a -le $b:a is not less or equal to b"
+fi
+```
+运行结果如下：
+```
+10 -eq 20:a is not eual b
+10 -ne 20:a is not equal to b
+10 -get 20:a is not greater than b
+10 -lt 20:a is less than b
+10 -ge 20:a is greater or equal to b
+10 -le 20:a is less or equal to b
+```
+ 关系运算符列表
+ 运算符|说明|举例
+ -----|----|-----
+ -eq|检测两个数是否相等|[ $a -eq $b ]
+ -ne|检测两个数不相等|[ $a -ne $b ]
+ -gt|检测左边的数大于右边的数|[ $a -gt $b ]
+ -lt|检测左边的数小于右边的数|[ $a -lt $b ]
+ -ge|检测左边的数大于等于右边的数|[ $a -ge $b ]
+ -le|检测左边的数小于等于右边的数|[ $a -lr $b ]
+ 
+#### 布尔运算符
+脚本样例：
+```
+#!/bin/bash
+a=10
+b=20
+c=30
+
+#!非运算，也叫取反
+if [ $a != $b ]
+then
+	echo "$a != $b:ture"
+else
+	echo "$ != $b:fasle"
+fi
+
+#-a and 运算
+if [ $a -gt $b -a $a -lt $c ] 
+then
+	echo "$a -gt $b -a $a -lt $c:true"
+else
+	echo "$a -gt $b -a $a -lt $c:false"
+fi
+
+#-o or 运算
+if [ $a -gt $b -o $a -lt $c ]
+then
+	echo "$a -gt $b -o $a -lt $c:true"
+else 
+	echo "$a -gt $b -o $a -lt $c:false"
+fi
+```
+
+运行结果：
+```
+10 != 20:ture
+10 -gt 20 -a 10 -lt 30:false
+10 -gt 20 -o 10 -lt 30:true
+```
+
+布尔运算符列表：
+运算符|说明|举例
+----|-----|-----
+!|非运算，也可取反|[ !false ]返回ture
+-o|或运算|[ false -o ture ]返回true
+-a|与运算|[ false -a true ]返回false
+
+#### 字符串运算符
+脚本例子：
+```
+#!/bin/bash
+a="abc"
+b="def"
+c=""
+
+#=判断字符串相等
+if [ $a = $b ] 
+then 
+	echo "$a = $b:ture"
+else
+	echo "$a = $b:false" 
+fi 
+
+# !=判断字符串不相等
+if [ $a != $b ] 
+then
+	echo "$a != $b:true"
+else
+	echo "$a != $b:false"
+fi
+
+#-z检测字符串的长度是否为0，为0返回ture
+if ［ -z $a ］ 
+then 
+ 	echo "-z $a:true"
+ else
+ 	echo "-z $a:false"
+ fi
+
+ #-n 检测字符串是否为0,为0返回false
+ if ［－n $a ］
+ then
+ 	echo "-n $a:true"
+ else
+ 	echo "-n $a:false"
+ fi
+ 
+ #str 检测字符串是否为空
+ if [ str $c ] 
+ then
+ 	echo "str $c:true"
+ else
+ 	echo "str $c:false"
+ fi
+```
+运行结果：
+```
+abc = def:false
+abc !=def:ture
+-z abc:false
+-n abc:true
+str  :ture
+```
+
+字符串运算符列表
+运算符|说明|举例
+-----|----|-----
+=|字符串相等运算｜[ $a = $b]:false
+!=|字符穿不相等运算｜[ $a != $b ]:ture
+-z|字符长度为0检测，为0:true｜[ -z $a ]:false
+-n|字符串长度为0计算，为0:false｜[ -n $a ]:ture
+str|字符串为空计算，空：ture｜[ str $c ]:ture
+
+####文件测试运算符
+文件测试运算符用于检测Linux文件的各种属性。下面有一个脚本展示文件运算符。
+```
+#!/bin/bash
+file="/vagrant/Shell.md"
+
+#-b检测文件是否是块设备文件，如果是，返回ture
+if [ -b $file ]
+then
+	echo "-b ${file}:ture"
+else
+	echo "-b ${file}:false"
+fi
+
+#-c检测文件是否为字符设备文件，如果是，返回ture
+if [ -c $file ]
+then
+	echo "-c ${file}:ture"
+else
+	echo "-c ${file}:false"
+fi
+
+#-d检测文件是否为目录，如果是返回ture
+if [ -d $file ]
+then
+	echo "-d ${file}:ture"
+else
+	echo "-d ${file}:false"
+fi
+
+#-f检测文件是否是普通文件（既不是目录，也不是设备文件），如果是返回ture
+if [ -f $file ]
+then
+	echo "-f ${file}:ture "
+else
+	echo "-f ${file}:false"
+fi
+
+#-g检测文件是否设置了SGID位，如果是，则返回ture
+if [ -g ${file} ]
+then
+	echo "-g ${file}:ture"
+else
+	echo "-g ${file}:false"
+fi
+
+#-k检测文件是否设置了粘着位（Sticky Bit）,如果是，返回ture
+if [ -k ${file} ]
+then
+	echo "-k ${file}:ture"
+else
+	echo "-k ${file}:false"
+fi
+
+#-p检测文件是否具有管道，如果是，返回ture
+if [ -p ${file} ]
+then
+	echo "-p ${file}:ture"
+else
+	echo "-p ${file}:false"
+fi
+
+#-u检测文件是否设置了SUID位，如果是，返回 ture
+if [ -u ${file} ]
+then
+	echo "-u ${file}:ture"
+else
+	echo "-u ${file}:false"
+fi
+
+
+#-r检测问价是否为可读，如果是返回ture
+if [ -r ${file} ]
+then
+	echo "-r ${file}:ture"
+else
+	echo "-r ${file}:false"
+fi
+
+#-w检测文件是否为可写，如果是就返回ture
+if [ -w ${file} ]
+then
+	echo "-w ${file}:ture"
+else
+	echo "-w ${file}:false"
+fi
+
+#-x检测文件是否为可执行文件，如果是就返回ture
+if [ -x ${file} ]
+then
+ 	echo "-x ${file}:ture"
+else
+	echo "-x ${file}:false"
+fi
+
+#-s检测文件是否为空（文件大小是否大于0）如果是返回ture
+if [ -s ${file} ]
+then
+	echo "-s ${file}:ture"
+else
+	echo "-s ${file}:false"
+fi
+
+#-e检测文件是否存在（包括目录），如果是就返回true
+if [ -e ${file} ]
+then
+	echo "-e ${file}:ture"
+else
+	echo "-e ${file}:false"
+fi
+```
+运行结果：
+```
+[vagrant@localhost vagrant]$ ./test9.sh
+-b /vagrant/Shell.md:false
+-c /vagrant/Shell.md:false
+-d /vagrant/Shell.md:false
+-f /vagrant/Shell.md:ture 
+-g /vagrant/Shell.md:false
+-k /vagrant/Shell.md:false
+-p /vagrant/Shell.md:false
+-u /vagrant/Shell.md:false
+-r /vagrant/Shell.md:ture
+-w /vagrant/Shell.md:ture
+-x /vagrant/Shell.md:false
+-s /vagrant/Shell.md:ture
+-e /vagrant/Shell.md:ture
+```
