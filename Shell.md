@@ -528,7 +528,7 @@ str|字符串为空计算，空：ture｜[ str $c ]:ture
 
 ####文件测试运算符
 文件测试运算符用于检测Linux文件的各种属性。下面有一个脚本展示文件运算符。
-```
+```shell
 #!/bin/bash
 file="/vagrant/Shell.md"
 
