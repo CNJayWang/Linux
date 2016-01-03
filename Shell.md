@@ -867,3 +867,189 @@ The first program always prints 'Hello,0'
 $
 ```
 注意，根据POSIX标准，浮点格式`%e`、`%E`、`%f`、`%g`与`%G`是“不需要被支持”。这是因为awk支持浮点预算，且有它自己的printf语句。这样Shell程序中需要将浮点数值进行格式化的打印时，可使用小型的awk程序实现。然而，内建于bash、ksh93和zsh中的printf命令都支持浮点格式。
+
+###流程控制
+#### if else
+if语句通过关系运算表达式来判断执行哪个分支。三种分支`if....else`语句
+* `if...fi`语句
+* `if...else...fi`语句
+* `if...elif...fi`语句
+
+
+#####if...fi语句
+```
+if [ expression ]
+then
+	Statement(s) to be executed if expression=true
+fi
+```
+
+#####if...else...fi语句
+```
+if [ expression]
+then
+		Statement(s) to be executed if expression=true
+else
+		Statement(s) to be executed if expression=false
+fi
+```
+#####if...elif..fi语句
+```
+if [ expression0 ]
+then 
+	Statement0 to be executed if expression0=ture
+elif [ expression 1]
+then
+	Statement1 to executed if expressin1=ture
+else 
+	Last Statement to executed if expression0=false and expression1=false
+fi
+```
+
+#### case esac
+case...esac与其他的语言中的switch...case语句类似，是多分支结构
+格式如下：
+```
+case var in
+var1)
+	command1
+    command2
+    command3
+    ;;
+var2)
+	command1
+    command2
+    command3
+    ;;
+*)
+	command1
+    command2
+    command3
+    ;;
+esac
+```
+`case`工作模式如上代码,取值必须为关键字`in`,每一行必须以`)`结束。取值可以是为变量或常数。匹配发现某值符合某一模式后，执行这一匹配分支，直到`;;`，这里`;;`相当`break`类似，跳出整个case。
+这里有个`*)`匹配，这里和`default`的功能一样，如果其他的都匹配不到，那么久执行`*)`这个默认分支。
+
+case脚本例子：
+```
+/!#/bin/bash
+echo 'Input a number between 1 to 4'
+echo 'Your numer is:\c'
+read aNum
+case $aNum in
+	1) echo 'You select 1'
+	;;
+    2) echo 'You select 2'
+    ;;
+    3) echo 'You select 3'
+    ;;
+    4) echo 'You select 4'
+    ;;
+    *) echo 'You dont read the right num between 1 to 2'
+    ;;
+esac
+```
+运行结果：
+```
+Input a number between 1 to 4
+Your numer is:\c
+3
+You select 3
+
+```
+
+#### for 循环
+shell中for循环的格式如下：
+```
+for var in list
+do
+	command1
+    command2
+    ...
+    comandN
+done
+```
+`list`列表是一组值(数字、字符串)组成的序列，每个值通过空格分隔。没循环一次，列表中的下一个值就赋给变量。
+`in`列表是可选的，如果不用它，for循环使用命令行参数
+例如：
+```
+for var in 1 2 3 4 5
+do
+	echo "The value is:${var}"
+done
+```
+运行结果如下
+```
+The value is 1
+The value is 2
+The value is 3
+The value is 4
+The value is 5
+```
+ 顺序输出字符串中的字符：
+```
+for str in 'This is a string'
+do 
+	echo "${str}\n"
+done
+```
+运行结果
+```
+This is a string
+```
+显示主目录下以.bash 开头的文件
+```
+for FILE in $HOME/.bash*
+do
+	echo ${FILE}
+done
+```
+运行结果：
+```
+/home/vagrant/.bash_history
+/home/vagrant/.bash_logout
+/home/vagrant/.bash_profile
+/home/vagrant/.bashrc
+```
+
+#### while循环
+while循环用于不断执行一系列命令，也用于从文件中读取数据命令
+```
+while command
+do
+	Statement(s) to be executed if command is true
+done
+```
+一个简单的`while`循环，从0开始循环递增直到5，终止。
+```
+#!/bin/bash
+COUNTER=0
+END=5
+while [ ${COUNTER} -lt ${END} ]
+do
+        COUNTER=`expr ${COUNTER} + 1`
+    echo ${COUNTER}
+done
+```
+运行结果：
+```
+[vagrant@localhost vagrant]$ ./test17.sh
+1
+2
+3
+4
+5
+```
+还可以写一个`while` 显示键盘的输入信息
+```
+while read input
+do
+	echo "you input ${input}"
+done
+```
+####until循环
+####跳出循环
+
+###函数
+
