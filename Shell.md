@@ -725,3 +725,50 @@ echo ${string:0:2}
 string="Jay is learing linux shell"
 echo `expr index "${string} is"`
 ```
+###数组
+数组很重要的，用来顺序存储一组数据，在`bash shell`中只支持一纬数组，但和`C`一样不限定数组长度，取数组中元素需要下标`index`，从0开始。
+
+####定义数组
+在shell中定义数组不像`C`和`Java`使用`{}`直接定义，这里是用`()`定义数组的。
+例如：
+```
+#定义一个数组
+#每个元素空格分开
+array=(value0 value1 value2 value3 )
+```
+或者：
+```
+#这里和js一样不加分号，以行为执行单位，到行末结束
+array=(
+value0
+value1
+value2
+)
+```
+单独定义数组中的元素：
+```
+array[0]="value1"
+array[1]="value2"
+array[2]="value3"
+```
+####读取数组元素
+读取数组的一般格式为：
+```
+${array[index]}
+```
+可以使用`@`或`*`获取数组中所有的元素：
+```
+${array[*]}
+${array[@]}
+```
+
+####获取数组的长度
+获取数组长度和获取字符串的长度方法一样，字符串本身也是一个字符数组。
+```
+#取得数组元素的个数
+length=${#array[*]}
+#或者
+length=${#array[@]}
+#获取数组中的元素的长度
+length=${#array[n]}
+```
