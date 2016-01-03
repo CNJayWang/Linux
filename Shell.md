@@ -74,6 +74,7 @@ echo "Hello World !"
 ```
 这样运行脚本就是不需要在脚本第一行定义运行的解释器了。
 
+
 ###变量
 
 ####定义变量
@@ -182,6 +183,15 @@ echo "Second Param :${2}"
 Shell Filename:./test2.sh
 First Param: Hello
 Second Param: world
+```
+#### shell中注释
+shell中没有多行注释，只能一行一行注释。注释以`#`开头，当解释器读到带`#`就会忽略
+```
+#----------------------
+#Author:Jay
+#Email:jay.wang.liu@gmail.com
+#Create Date 1/1/2016 8:00
+#这些都是注释
 ```
 
 ### Shell替换
