@@ -670,3 +670,58 @@ fi
 -w|检测文件是否是否为可写，如果是，就返回ture
 -x|检测文件是否为可读，如果是，就返回ture
 -e|检测文件是否为空，包括目录，如果是，则返回ture
+
+### 字符串
+字符串在编程中是最常用的数据类型，当然在shell中也是这样，shell中字符串可以用`" "`或`' '`。
+
+####单引号
+```
+strg='this is a string'
+```
+单引号字符串的限制：
+* 单引号是原样输出，里面的字符使用变量是无效的，`echo 'this is ${st}'`,输出结果是`this is ${st}`
+* 单引号里面是不能出现单引号的，即使进行转义也不行。
+
+####双引号
+```
+username="Jay"
+email="jay.wang.liu@gmail.com"
+echo "${username} is login and email is ${email} \n"
+```
+双引号的特点：
+* 双引号里面可以有变量
+* 双引号也可以有转义字符
+
+####拼接字符串
+```
+firstName="Jay"
+lastName="Wang'
+email="jay.wang.liu@gmail.com"
+username=${lastName},${firstName}
+echo ${username}
+```
+输出结果为：
+```
+Wang,Jay
+```
+####获取字符穿长度
+```
+string="qazwsx"
+echo ${#string}
+```
+输出：
+```
+6
+```
+####提取子字符串
+```
+string＝"Jay is learing linux shell"
+echo ${string:0:2}
+#｛string:index:length｝表示从哪里开始提取多长的字符串
+```
+
+####查找子字符串
+```
+string="Jay is learing linux shell"
+echo `expr index "${string} is"`
+```
